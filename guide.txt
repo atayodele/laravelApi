@@ -1,0 +1,59 @@
+install laragon / Xampp / Wamp
+packagist
+install composer 
+composer create-project --prefer-dist laravel/laravel blog
+
+php artisan make:controller PostController
+php artisan make:model Post
+php artisan make:migration create_posts_table
+php artisan migrate
+php artisan make:migration add_title_to_posts_table
+php artisan migrate:rollback
+php artisan make:resource Student
+php artisan make:middleware Cors
+	After installation, replace handle function with this
+	public function handle($request, Closure $next)
+    {
+        return $next($request)
+            ->header('Access-Control-Allow-Origin',"*")
+            ->header('Access-Control-Allow-Methods',"PUT,POST,DELETE,GET,OPTIONS")
+            ->header('Access-Control-Allow-Headers',"Accept,Authorization,Concept-Type");
+    }
+	Goto kernel.php register cors to the middleware, use this code;
+        \App\Http\Middleware\Cors::class,
+
+How to generate multiple files in single command
+	php artisan make:model Post -mc		==> model, migration, controller
+
+Business Logic 
+	==> php artisan tinker
+	$assignment = new App\Assignment;
+	$assignment->body = 'Finish School Work';
+	$assignment->save();
+	
+	Refresh DB
+	
+To get All from table
+	==> App\Assignment::all();
+	
+To get the first value from table
+	==> App\Assignment::first();
+To get a record with a clause from table
+	==> App\Assignment::where('completed', false)->get();
+	
+	
+AUTHENTICATIONS WITH PASSPORT
+composer require laravel/passport
+Goto config folder, find app.php Add this to line 176 after providers
+	Laravel\Passport\PassportServiceProvider::class,
+	
+CMD => php artisan migrate
+	=> php artisan passport:install
+	
+Goto User.php model, add this namespace => use Laravel\Passport\HasApiToken;
+
+Goto Provider, AuthServiceProvider => add namespace - use Laravel\Passport\Passport
+								   => uncomment - 'App\Model' => 'App\Policies\ModelPolicy'
+								   => add to boot function - Passport::routes();
+Goto config, auth.php => from API remove - 'hash' => false, 
+					  => change 'driver' => 'token' to 'driver' => 'passport',
